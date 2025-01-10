@@ -1,0 +1,7 @@
+
+# initial next.js project
+npx create-next-app@latest my-gps-app --typescript true --tailwind true --eslint true --app true --use-npm true --src-dir false
+
+#start next js projecty
+
+

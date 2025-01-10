@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  node:
+    image: node:22-alpine
+    # Interactive shell access
+    # stdin_open: true  # equivalent to -i
+    # tty: true        # equivalent to -t
+    # Command to keep container running and verify versions
+    ports:
+      - "3000:3000"  # For Next.js development server
+    command: >
+      sh -c "echo 'Node.js Version:' &&
+             node -v &&
+             echo 'npm Version:' &&
+             npm -v &&
+             echo 'Container is ready. Use docker exec to access the shell.' &&
+             tail -f /dev/null"
+    # Mount your local code directory
+    volumes:
+      - .:/app
+    working_dir: /app
