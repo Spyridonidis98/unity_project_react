@@ -1,7 +1,16 @@
+docker compose up -d
 
-# initial next.js project
+# initial next.js project if it is not initialized
 npx create-next-app@latest my-gps-app --typescript true --tailwind true --eslint true --app true --use-npm true --src-dir false
 
-#start next js projecty
+#when the project initializes it install npm depedencies 
+#if you using existing project run npm install first 
+npm install
 
+
+#start next js project,run npm install first like menchined above
+npm run dev
+
+#open a terminal of the container 
+sudo docker exec -it 87c9c0979a84 sh
 
