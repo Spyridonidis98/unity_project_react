@@ -55,10 +55,21 @@ function Test3() {
   // const [exit, setExit] = useState(false); wont be updated inside loop, use userRef instead
 
   //////////////user-input/////////////////////////////
-  const nameInput = useRef<HTMLInputElement>(null);
+  const userName = useRef<HTMLInputElement>(null);
+  const userType = useRef<HTMLSelectElement>(null);
   const getUserName = () => {
-      return nameInput.current?.value || '';
+      return userName.current?.value || '';
   };
+  const getUserType = () => {
+      return userType.current?.value || '';
+  };
+
+  ////////////delete-user/////////////////////////////
+  const [deleteMessage, setDeleteMessage] = useState<string>('');
+  const deletedUser = useRef<HTMLInputElement>(null);
+
+
+
 
   //   // Cleanup on unmount
   // useEffect(() => {
@@ -204,9 +215,10 @@ function Test3() {
             },
             body: JSON.stringify({
               user: getUserName(),
-              x: coordinates.current?.latitude,
-              z: coordinates.current?.longitude,//coordinates.current?.longitude,
-              angle: orientation.current
+              user_type: getUserType(),
+              x: coordinates.current?.longitude,
+              z: coordinates.current?.latitude,//coordinates.current?.longitude,
+              angle: orientation.current,
             }),
           });
           if (!response.ok) {
@@ -235,19 +247,56 @@ function Test3() {
     
   };
 
+  const DeleteUser = async () => {
+    try {
+      const response = await fetch('/api/delete-user', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user: deletedUser.current?.value || ''
+        }),
+      });
+      if (!response.ok) {
+        setDeleteMessage("Failed to delete user");
+        return;
+      }
+      setDeleteMessage("User " + deletedUser.current?.value +" deleted")
+    } catch (error) {
+      setDeleteMessage(error instanceof Error ? error.message : 'An unknown error occurred');
+    } finally {
+    }
+  };
+
+
   const stopSendingData  = async () => {exit.current = true;}
 
   return (
     <div>
-      <div className="mb-4">
-        <input 
-            ref={nameInput}
-            type="text"
-            defaultValue=""
-            placeholder="Enter user name"
-            className="px-4 py-2 border rounded mr-2 text-black"
-        />
+      <div className="flex items-center">
+        <div className="mr-4">
+          <input 
+              ref={userName}
+              type="text"
+              defaultValue=""
+              placeholder="Enter user name"
+              className="px-4 py-2 border rounded text-black"
+          />
+        </div>
+        <select 
+          ref={userType}
+          defaultValue="vehicle"
+          className="px-4 py-2 border rounded text-black bg-white"
+        >
+          <option value="vehicle">vehicle</option>
+          <option value="pedestrian">pedestrian</option>
+          <option value="bike">bike</option>
+          <option value="oculus">oculus</option>
+
+        </select>
       </div>
+
 
       <button 
         onClick={startSendingData}
@@ -273,8 +322,26 @@ function Test3() {
       {coordinates.current && (<h1>current lat: {coordinates.current.latitude}</h1>)}
       {coordinates.current && (<h1>current lot: {coordinates.current.longitude}</h1>)}
       {orientation.current && (<h1>current orientation: {orientation.current}</h1>)}
-      {nameInput.current?.value && (<h2>User: {nameInput.current.value}</h2>)}
+      {userName.current?.value && (<h2>User: {userName.current.value}</h2>)}
 
+
+      <div className="flex items-center">
+        <div className="mr-4">
+          <input 
+              ref={deletedUser}
+              type="text"
+              defaultValue=""
+              placeholder="Enter user to delete"
+              className="px-4 py-2 border rounded text-black"
+          />
+        </div>
+        <button 
+          onClick={DeleteUser}
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+          Delete User
+        </button>
+      </div>
+      {deleteMessage && (<h1>{deleteMessage}</h1>)}
 
     </div>
 
